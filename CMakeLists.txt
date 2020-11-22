@@ -28,6 +28,7 @@ option(ENABLE_HEADLESS_RENDERING  "Use OSMesa for headless rendering"        OFF
 option(STATIC_WINDOWS_RUNTIME     "Use static (MT/MTd) Windows runtime"      ON )
 option(GLIBCXX_USE_CXX11_ABI      "Set -D_GLIBCXX_USE_CXX11_ABI=1"           OFF)
 option(BUILD_RPC_INTERFACE        "Build the RPC interface"                  OFF)
+
 # 3rd-party build options
 option(USE_BLAS                   "Use BLAS/LAPACK instead of MKL"           OFF)
 option(USE_SYSTEM_EIGEN3          "Use system pre-installed eigen3"          OFF)
@@ -51,11 +52,20 @@ option(WITH_FAISS                 "Enable Faiss"                             ON 
 # Sensor options
 option(BUILD_LIBREALSENSE         "Build support for Intel RealSense camera" OFF)
 option(BUILD_AZURE_KINECT         "Build support for Azure Kinect sensor"    OFF)
+
 # ML library options
 option(BUILD_TENSORFLOW_OPS       "Build ops for TensorFlow"                 OFF)
 option(BUILD_PYTORCH_OPS          "Build ops for PyTorch"                    OFF)
 option(BUNDLE_OPEN3D_ML           "Includes the Open3D-ML repo in the wheel" OFF)
 option(DEVELOPER_BUILD  "Add -dev+commit_hash to the project version number" ON )
+
+# Detect system architectures.
+if(UNIX AND NOT APPLE)
+    set(LINUX TRUE)
+    if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "aarch64")
+        set(LINUX_AARCH64 TRUE)
+    endif()
+endif()
 
 # In ExternalProject_Add, if THIRD_PARTY_DOWNLOAD_DIR is specified, CMake will
 # first try to look for the required files in THIRD_PARTY_DOWNLOAD_DIR, before
@@ -102,16 +112,13 @@ if(POLICY CMP0063)
     cmake_policy(SET CMP0063 NEW)
 endif()
 
-# Set policy to enable MSVC_RUNTIME_LIBRARY property.
-# TODO: This requires CMake 3.15+ on Winndows. At this point, we're not updating
-# cmake_minimum_required to 3.15 since it may break existing systems. As Windows
-# users can typically download the latest CMake, the impact should be minimal.
+# Set policy to enable MSVC_RUNTIME_LIBRARY property. Requires CMake 3.15+.
 if(POLICY CMP0091)
     cmake_policy(SET CMP0091 NEW)
 endif()
 
 # Catch a few incompatible build options
-if((UNIX AND NOT APPLE) AND BUILD_LIBREALSENSE)
+if(LINUX AND BUILD_LIBREALSENSE)
     message(STATUS "Disabling RealSense since it is not fully supported on Linux.")
     set(BUILD_LIBREALSENSE OFF)
 endif()
@@ -164,16 +171,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/getting_started.rst.in
 
 project(Open3D VERSION ${OPEN3D_VERSION} LANGUAGES C CXX)
 message(STATUS "Open3D ${OPEN3D_VERSION_FULL}")
-
-if(UNIX AND NOT APPLE)
-    execute_process(COMMAND uname -p
-        OUTPUT_VARIABLE PROCESSOR_ARCH
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "aarch64")
-        set(LINUX_AARCH64 TRUE)
-    endif()
-endif()
 
 # Set BLAS/LAPACK library preference.
 if(LINUX_AARCH64)

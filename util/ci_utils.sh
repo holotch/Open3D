@@ -228,6 +228,7 @@ build_pip_conda_package() {
         echo "Azure Kinect enabled in Python wheel."
         BUILD_AZURE_KINECT=ON
     else
+        # For macOS.
         echo "Azure Kinect disabled in Python wheel."
         BUILD_AZURE_KINECT=OFF
     fi
