@@ -57,7 +57,7 @@ public:
     }
 
     static void GLFWErrorCallback(int error, const char *description) {
-        utility::LogWarning("GLFW Error: {}", description);
+        utility::LogError("GLFW Error: {}", description);
     }
 };
 
@@ -114,9 +114,11 @@ bool Visualizer::CreateVisualizerWindow(
         utility::LogWarning("Failed to create window");
         return false;
     }
-    glfwSetWindowPos(window_, left, top);
+    glfwSetWindowPos(window_, left+1280, top);
     glfwSetWindowUserPointer(window_, this);
 
+    aux_window=glfwCreateWindow(1280, 720, "Holotch", NULL, NULL);
+    glfwSetWindowPos(aux_window, left, top);
 #ifdef __APPLE__
     // Some hacks to get pixel_to_screen_coordinate_
     glfwSetWindowSize(window_, 100, 100);
@@ -201,6 +203,14 @@ bool Visualizer::CreateVisualizerWindow(
 
     is_initialized_ = true;
     return true;
+}
+
+GLFWwindow* Visualizer::getVisualizerWindow(){
+    return window_;
+}
+
+GLFWwindow* Visualizer::getAuxWindow(){
+    return aux_window;
 }
 
 void Visualizer::DestroyVisualizerWindow() {

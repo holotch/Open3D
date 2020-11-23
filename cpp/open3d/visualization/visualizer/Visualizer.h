@@ -34,7 +34,6 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -97,6 +96,9 @@ public:
                                 const int top = 50,
                                 const bool visible = true);
 
+
+    GLFWwindow* getVisualizerWindow();     
+    GLFWwindow* getAuxWindow();     
     /// \brief Function to destroy a window.
     ///
     /// This function MUST be called from the main thread.
@@ -240,7 +242,7 @@ protected:
     /// Function to do the main rendering
     /// The function first sets view point, then draw geometry (pointclouds and
     /// meshes individually).
-    virtual void Render(bool render_screen = false);
+    virtual void Render();
 
     void CopyViewStatusToClipboard();
 
@@ -263,6 +265,7 @@ protected:
 protected:
     // window
     GLFWwindow *window_ = NULL;
+    GLFWwindow *aux_window = NULL;
     std::string window_name_ = "Open3D";
     std::function<bool(Visualizer *)> animation_callback_func_ = nullptr;
     // Auxiliary internal backup of the callback function.
@@ -277,12 +280,13 @@ protected:
     bool is_redraw_required_ = true;
     bool is_initialized_ = false;
     GLuint vao_id_;
-
+    
     // render targets for "capture_screen_float_buffer" and
     // "capture_screen_image" in offscreen render mode
     unsigned int render_fbo_;
     unsigned int render_rgb_tex_;
     unsigned int render_depth_stencil_rbo_;
+
 
     // view control
     std::unique_ptr<ViewControl> view_control_ptr_;
