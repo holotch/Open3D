@@ -89,13 +89,14 @@ public:
     /// \param left Left margin of the window to the screen.
     /// \param top Top margin of the window to the screen.
     /// \param visible Whether the window is visible.
-    bool CreateVisualizerWindow(const std::string &window_name = "Open3D",
+    bool CreateVisualizerWindow(std::string window_name = "Open3D",
                                 const int width = 640,
                                 const int height = 480,
                                 const int left = 50,
                                 const int top = 50,
                                 const bool visible = true);
 
+    bool CreateVisualizerWindow2();
 
     GLFWwindow* getVisualizerWindow();     
     GLFWwindow* getAuxWindow();     
@@ -242,7 +243,7 @@ protected:
     /// Function to do the main rendering
     /// The function first sets view point, then draw geometry (pointclouds and
     /// meshes individually).
-    virtual void Render();
+    virtual void Render(bool render_screen = true);
 
     void CopyViewStatusToClipboard();
 

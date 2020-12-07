@@ -71,13 +71,17 @@ Visualizer::~Visualizer() {
     glfwTerminate();  // to be safe
 }
 
+bool Visualizer::CreateVisualizerWindow2(){
+   return CreateVisualizerWindow("3D Viewer", 720, 720, 500, 500);
+}
+
 bool Visualizer::CreateVisualizerWindow(
-        const std::string &window_name /* = "Open3D"*/,
-        const int width /* = 640*/,
-        const int height /* = 480*/,
-        const int left /* = 50*/,
-        const int top /* = 50*/,
-        const bool visible /* = true*/) {
+        std::string window_name,
+        const int width,
+        const int height,
+        const int left,
+        const int top,
+        const bool visible) {
     window_name_ = window_name;
     if (window_) {  // window already created
         UpdateWindowTitle();
